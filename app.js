@@ -10,7 +10,7 @@ var oa = new OAuth(
   "zFq15wB5yUxfdH4n8oz5w",
   "m4Ed8X7vKetAcK8jMZoNKdUFlQZZsdbnDqRskOaYk",
   "1.0",
-  "http://www.rekwester.com/mixer",
+  "http://localhost:3000/dashboard",
   "HMAC-SHA1"
 );
 
@@ -58,11 +58,15 @@ app.get('/signin', function(req, res){
       console.log('oauth.token: ' + req.session.oauth.token);
       req.session.oauth.token_secret = oauth_token_secret;
       console.log('oauth.token_secret: ' + req.session.oauth.token_secret);
-      res.redirect('https://twitter.com/oauth/authenticate?oauth_token='+oauth_token)
+      res.redirect('https://twitter.com/oauth/authenticate?oauth_token='+oauth_token);
   }
   });
 });
-app.get('/auth/twitter/callback', function(req, res, next){
+
+// app.get('/oauth/twitter/callback', routes.dashboard);
+
+app.get('/dashboard', function(req, res, next){
+  console.log(req.session.oauth);
   if (req.session.oauth) {
     req.session.oauth.verifier = req.query.oauth_verifier;
     var oauth = req.session.oauth;
@@ -76,27 +80,13 @@ app.get('/auth/twitter/callback', function(req, res, next){
         req.session.oauth.access_token = oauth_access_token;
         req.session.oauth.access_token_secret = oauth_access_token_secret;
         console.log(results);
-        res.send("worked. nice one.");
+        res.render('dashboard');
       }
     }
     );
   } else
     next(new Error("you're not supposed to be here."))
 });
-
-// app.get('/mixer', function(){
-//     try{
-//       $.ajax({
-//         url:"https://api.twitter.com/1.1/statuses/mentions_timeline.json",
-//         data: {
-//         },
-//         jsonp: false,   // don't have jQuery choose callback name
-//         crossDomain: true,
-//         success: console.log("WE DID IT.")
-//         } );
-//       return false;
-//     } catch (e) {console.log(e.description);}
-// });
 
 http.createServer(app).listen(app.get('port'), function(){
   console.log("Express server listening on port " + app.get('port'));
