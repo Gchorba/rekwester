@@ -45,7 +45,7 @@ app.configure('development', function(){
 
 app.get('/', routes.index);
 
-// Twitter OAuth Routes
+// Sign in with Twitter
 app.get('/signin', function(req, res){
   oa.getOAuthRequestToken(function(error, oauth_token, oauth_token_secret, results){
     if (error) {
@@ -63,10 +63,9 @@ app.get('/signin', function(req, res){
   });
 });
 
-// app.get('/oauth/twitter/callback', routes.dashboard);
-
+// User views Dashboard
 app.get('/dashboard', function(req, res, next){
-  console.log(req.session.oauth);
+  //console.log(req.session.oauth);
   if (req.session.oauth) {
     req.session.oauth.verifier = req.query.oauth_verifier;
     var oauth = req.session.oauth;
@@ -79,8 +78,12 @@ app.get('/dashboard', function(req, res, next){
       } else {
         req.session.oauth.access_token = oauth_access_token;
         req.session.oauth.access_token_secret = oauth_access_token_secret;
-        console.log(results);
-        res.render('dashboard');
+        console.log("OAUTH "+oauth_access_token);
+        var passData = { username: results.screen_name, 
+                         user_id: results.user_id, 
+                         access_token: oauth_access_token, 
+                         access_token_secret: oauth_access_token_secret };
+        res.render('dashboard', { userData: passData });
       }
     }
     );
@@ -88,6 +91,7 @@ app.get('/dashboard', function(req, res, next){
     next(new Error("you're not supposed to be here."))
 });
 
+// Create server
 http.createServer(app).listen(app.get('port'), function(){
   console.log("Express server listening on port " + app.get('port'));
 });

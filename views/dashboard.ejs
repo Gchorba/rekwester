@@ -1,10 +1,13 @@
 <!DOCTYPE html>
 <html>
   <head>
-    <title>Rekwester</title>
+    <title><%= userData.username %>'s Dashboard</title>
     <link rel='stylesheet' href='/stylesheets/style.css' />
+    <script type="text/javascript" src="javascripts/pullrequests.js"></script>
   </head>
   <body>
-  	<p>Congrats</p>
+  	<p>Congrats, <%= userData.username %></p>
+  	<iframe class='center' src='https://embed.spotify.com/?uri=spotify:track:2uljPrNySotVP1d42B30X2' 
+  	width='300' height='380' frameborder='0' allowtransparency='true'></iframe>
   </body>
 </html>
